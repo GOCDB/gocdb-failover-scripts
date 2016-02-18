@@ -1,0 +1,3 @@
+# Used for sqlplus (after filtering) and impdp (directly as the parfile)
+# Don't add whitespace - several scripts rely on the structure below
+userid=system/<your_password>
