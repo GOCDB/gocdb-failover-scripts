@@ -37,11 +37,11 @@ pingUrl="https://goc.egi.eu/portal/GOCDB_monitor/ops_monitor_check.php"
 # An external url to check that local network can reach outside
 externalPingUrl="http://google.co.uk"
 
-# number of secs between re-pings
+# number of secs between re-pings (600secs = 10mins) 
 sleepTime=600s
 
-# number of successive fails before invoking failover 
-failCountLimit=15
+# number of successive fails before invoking failover (30 * 10mins = 300mins = 5hrs)
+failCountLimit=30
 
 # email subject and to address for notification that failover is engaged 
 SUBJECT="gocdb failover warning"
