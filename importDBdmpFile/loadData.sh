@@ -1,7 +1,19 @@
 #!/bin/bash
 
-# This import script imports gocdb5 schema and remaps this to the gocdb5 schema. 
-# impdp system/XXXXX schemas=gocdb5 directory=dmpdir dumpfile=goc5dump.dmp remap_tablespace=GOCDB5:users table_exists_action=replace logfile=impGocDump.log
+# This import script newly creates a gocdb5 schema/user in the oracle DB.  
+# a) The impdp requires the 'dmpdir' directory object to have already been created in the DB. 
+#    As the system user:
+#   - create or replace directory dmpdir as '/tmp';  # to create the dir object
+#   - SELECT owner, directory_name, directory_path FROM all_directories;   # to list dir objects 
+# b) The impdp creates the 'gocdb' user/schema in the DB - this schema must be therefore be dropped before importing (if it already exists) 
+# 
+# You may need to tweak your impdp command as needed for your install.  
+# 
+# Sample with inline system credentials:  
+#   impdp system/XXXXX schemas=gocdb5 directory=dmpdir dumpfile=goc5dump.dmp remap_tablespace=GOCDB5:users table_exists_action=replace logfile=impGocDump.log
+# 
+# Sample that remaps to a different user/schema name: 
+#  impdp system/xxxx schemas=gocdb5 directory=dmpdir dumpfile=goc5dump.dmp REMAP_SCHEMA=gocdb5:gocdbnewuser remap_tablespace=GOCDB5:users table_exists_action=replace logfile=impGocDump.log
 
 impdp parfile=/root/importDBdmpFile/pass_file schemas=gocdb5 \
 	directory=dmpdir dumpfile=goc5dump.dmp \
