@@ -22,6 +22,9 @@ updateLog=/root/autoEngageFailover/pingCheckLog.txt
 errorEngageFailoverLog=/root/autoEngageFailover/errorEngageFailoverLog.txt
 lockFile=/root/autoEngageFailover/engage.lock
 
+# Dir containing the import DB scripts and log file
+importDBdmpFile=/root/importDBdmpFile
+
 # maintainthe current fail count
 failcount=0
 
@@ -173,7 +176,8 @@ email "Detected successive failures. Attempting to engage the failover - please 
 
 
 # - Test that the last goc.dmp imported ok by parsing /root/importDBdmpFile/updateLog.txt 
-cd /root/importDBdmpFile
+#cd /root/importDBdmpFile
+cd $importDBdmpFile
 if [ "$(tail -1 ./updateLog.txt)" != "completed ok" ]; then
   errorLogger "Last import of dmp file did not complete ok, exiting auto-failover early before cert and dns switch "
   exit 1
@@ -186,54 +190,38 @@ mv /etc/cron.hourly/cronRunDbUpdate.sh /root
 
 errorLogger "Swapping server certs"
 
-# - Swap server cert 
-unlink /etc/grid-security/hostcert.pem 
-unlink /etc/pki/tls/private/hostkey.pem
-ln -s /etc/grid-security/goc.egi.eu.cert.pem /etc/grid-security/hostcert.pem
-ln -s /etc/pki/tls/private/goc.egi.eu.key.pem /etc/pki/tls/private/hostkey.pem
-# note, after the main instance has been restored, you will need to revert this swap: 
-# ln -s /etc/pki/tls/private/goc.dl.ac.uk.key.pem /etc/pki/tls/private/hostkey.pem
-# ln -s /etc/grid-security/goc.dl.ac.uk.cert.pem /etc/grid-security/hostcert.pem
+## - Swap server cert 
+## Not needed e.g. if your server cert has a dual SAN
+#unlink /etc/grid-security/hostcert.pem 
+#unlink /etc/pki/tls/private/hostkey.pem
+#ln -s /etc/grid-security/goc.egi.eu.cert.pem /etc/grid-security/hostcert.pem
+#ln -s /etc/pki/tls/private/goc.egi.eu.key.pem /etc/pki/tls/private/hostkey.pem
+## note, after the main instance has been restored, you will need to revert this swap: 
+## ln -s /etc/pki/tls/private/goc.dl.ac.uk.key.pem /etc/pki/tls/private/hostkey.pem
+## ln -s /etc/grid-security/goc.dl.ac.uk.cert.pem /etc/grid-security/hostcert.pem
 
-errorLogger "After server cert swap"
-cd /root/nsupdate_goc
+#errorLogger "After server cert swap"
 
-# Old nsupdate scripts when domain was hosted at nikhef
-# Run 1st nsupdate script to delete the goc.egi.eu domain  
-#errorLogger "Running 1st nsupdate script"
-#deleteGocDomainOut=$(./nsupdate-goc.sh ./nsupdateLiveGocFiles/delete_goc.egi.eu 2>&1)
-#deleteGocDomainCode=$?
-#errorLogger "$deleteGocDomainOut"
-#if [ $deleteGocDomainCode != 0 ]; then
-#  errorLogger "Deleting GOC Domain failed: $deleteGocDomainCode"
-#  exit $deleteGocDomainCode 
+
+#errorLogger "Changing DNS"
+#cd /root/nsupdate_goc
+#
+#
+#errorLogger "Running nsupdate script"
+#nsupdateOut=$(./goc_failover.sh 2>&1)
+#nsupdateCode=$?
+#errorLogger "nspdateCode was: $nsupdateCode"
+#errorLogger "nsupdateOut was: $nsupdateOut"
+#if [ $nsupdateCode != 0 ]; then
+#  errorLogger "nsupdate Failed"
+#  # dont need to exit, restart apache won't hurt anyway
+#  #exit $nsupdateCode
 #fi
-
-# Run 2nd nsupdate script to point goc.egi.eu to goc.dl.ac.uk 
-#errorLogger "Running 2nd nsupdate script"
-#addGocDomainOut=$(./nsupdate-goc.sh ./nsupdateLiveGocFiles/point_goc.egi.eu_To_goc.dl.ac.uk 2>&1)
-#addGocDomainCode=$?
-#errorLogger "$addGocDomainCode"
-#if [ $addGocDomainCode != 0 ]; then
-#  errorLogger "Adding GOC Domain failed: $addGocDomainCode"
-#  exit $addGocDomainCode
-#fi
-
-errorLogger "Running nsupdate script"
-nsupdateOut=$(./goc_failover.sh 2>&1)
-nsupdateCode=$?
-errorLogger "nspdateCode was: $nsupdateCode"
-errorLogger "nsupdateOut was: $nsupdateOut"
-if [ $nsupdateCode != 0 ]; then
-  errorLogger "nsupdate Failed"
-  # dont need to exit, restart apache won't hurt anyway
-  #exit $nsupdateCode
-fi
-
-
-# Restart apache 
-errorLogger "Restarting apache"
-service httpd restart 
+#
+#
+## Restart apache 
+#errorLogger "Restarting apache"
+#service httpd restart 
 
 
 # Finally create the lockFile to indicate the failover ran ok 

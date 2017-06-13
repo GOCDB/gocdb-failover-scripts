@@ -54,7 +54,7 @@ fi
 
 # Drop gocdb user (gocdb5 user is recreated when doing the impdb) 
 ####################################
-dropGocdbUserOutput=`./dropGocdbUser.sh 2>&1`
+dropGocdbUserOutput=`./dropGocdbUser2.sh 2>&1`
 dropGocdbExitCode=$?
 #echo $dropGocdbUserOutput
 if [ $dropGocdbExitCode != 0 ]; then 
@@ -138,6 +138,9 @@ fi
 # Create a copy of the last successfully imported dmp file and 
 # store this in the lastImportedDmpFile dir with the time and date appended 
 # to the file name 
+if [ ! -d lastImportedDmpFile ]; then
+  mkdir lastImportedDmpFile
+fi
 
 # cd into the dir (this directory must exist) 
 cd lastImportedDmpFile
