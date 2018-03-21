@@ -1,10 +1,10 @@
-echo "changing goc.egi.eu DNS record at ns.mui.cz to next.gocdb.eu"
+echo "changing goc.egi.eu DNS record at ns.mui.cz to goc.stfc.ac.uk"
 echo
 nsupdate -k goc.egi.eu_ns.muni.cz_key.conf  <<EOF
 server ns.muni.cz
 zone egi.eu
 update delete goc.egi.eu. CNAME
-update add goc.egi.eu. 60 CNAME next.gocdb.eu.
+update add goc.egi.eu. 60 CNAME goc.stfc.ac.uk.
 show
 send
 EOF

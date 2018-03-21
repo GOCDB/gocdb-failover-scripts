@@ -160,10 +160,10 @@ swtich between the failover instance and the production instance. You should mon
 ```bash
 nslookup goc.egi.eu
 # check this returns the following output referring to
-# next.gocdb.eu
+# goc.stfc.ac.uk
 	Non-authoritative answer:
-	goc.egi.eu canonical name = next.gocdb.eu.
-	Name: next.gocdb.eu
+	goc.egi.eu canonical name = goc.stfc.ac.uk.
+	Name: goc.stfc.ac.uk
 	Address: 130.246.143.160
 ```
 
