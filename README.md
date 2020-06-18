@@ -28,7 +28,6 @@ This repo contains the service and cron scripts used to run a failover gocdb ins
       |_ dropGocdbUser.sh     #   Drops the current DB schema
       |_ loadData.sh          #   Load the last successfully downloaded DB dmp into the RDBMS
       |_ gatherStats.sh       #   Oracle gathers stats to re-index
-      |_ pass_wgetrc_exemplar.txt #   Sample pwd file for getDump.sh (rename to pass_wgetrc) 
       |_ pass_file_exemplar.txt   #   Sample pwd file for DB (rename to pass_file)
 
   nsupdate_goc/              # Scripts for switching the DNS to the failover
@@ -71,10 +70,11 @@ cron:
 /root/importDBdmpFile/1_runDbUpdate.sh
 ```
 
-You will also need to modify the two password files to specify
-your own pw ('pass_wgetrc' and 'pass_file'). These contain the
-pw for the secure download of dmp file and the pw of the DB
-system user. 
+You will also need to: 
+* generate a public/private key pair using `ssh-keygen` and ensure the public
+key is present on the host with the database dmp file.
+* populate `importDBdmpFile/failover_TEMPLATE.sh` with
+appropriate values and copy it to `/etc/gocdb/failover.sh`
  
 ## /root/nsupdate_goc/
 Contains the nsupdate keys and nsupdate scripts for switching
