@@ -7,7 +7,7 @@ This repo contains the service and cron scripts used to run a failover gocdb ins
 * autoEngageFailover/
   * Contians a Service script (```gocdb-autofailover.sh```) and child scripts that monitors the main production instance. If a prolonged outage is detected, the GOCDB top DNS alias 'goc.egi.eu' is swtiched from the production instance to the failover instance. This switch can also be performed manually when needed. 
 * importDBdmpFile/
-  * Contains a sript that should be invoked by cron hourly (```1_runDbUpdate.sh```) to download and install a .dmp of the production DB into the local failover DB. This runs separtely from the autoEngageFailover process. 
+  * Contains a script that should be invoked by cron hourly (```1_runDbUpdate.sh```) to fetch and install a .dmp of the production DB into the local failover DB. This runs separtely from the autoEngageFailover process. 
 * nsupdate_goc/
   * Scripts for switching the DNS to/from the production/failover instance. 
 * archiveDmpDownload/
@@ -21,12 +21,12 @@ This repo contains the service and cron scripts used to run a failover gocdb ins
       |_ gocdb-autofailover.sh# MAIN SERVICE SCRIPT to mon production instance
       |_ engageFailover.sh    #   Child script, run if prolonged outage is detected
       
-  importDBdmpFile/            # Scripts download/install a .dmp of the prod data
+  importDBdmpFile/            # Scripts fetch/install a .dmp of the prod data
       |_ 1_runDbUpdate.sh     # MAIN SCRIPT that can be called from cron, invokes child scripts below 
       |_ ora11gEnvVars.sh     #   Setup oracle env
-      |_ getDump.sh           #   Download a .dmp of the production data 
+      |_ getDump.sh           #   Fetch a .dmp of the production data 
       |_ dropGocdbUser.sh     #   Drops the current DB schema
-      |_ loadData.sh          #   Load the last successfully downloaded DB dmp into the RDBMS
+      |_ loadData.sh          #   Load the last successfully fetched DB dmp into the RDBMS
       |_ gatherStats.sh       #   Oracle gathers stats to re-index
       |_ pass_file_exemplar.txt   #   Sample pwd file for DB (rename to pass_file)
 
@@ -50,7 +50,7 @@ following:
 * the gocdb admins are emailed, 
 * the age of the last successfully imported dmp file is
   checked to see that it is current, 
-* the hourly cron that downloads the dmp file is stopped (see
+* the hourly cron that fetches the dmp file is stopped (see
   importDBdmpFile below), 
 * <strike>symbolic links to the server cert/key are updated so they
   point to the 'goc.egi.eu' cert/key</strike> (note, no longer needed as cert contains dual SAN) 
@@ -58,7 +58,7 @@ following:
   nsupdate_goc below).  
 
 ## /root/importDBdmpFile/ 
-Contains scripts that download the .dmp file and install this
+Contains scripts that fetches the .dmp file and install this
 dmp file into the local Oracle XE instance. The master script
 is '1_runDbUpdate.sh' which needs to be invoked from an hourly
 cron:   
@@ -138,7 +138,7 @@ failover so the dns points back to the production instance
 and restore/restart the failover process. This includes:   
 * <strike>restore the symlinks to the goc.dl.ac.uk server cert and key
   (see details below)</strike> (no longer needed as cert contains dual SAN) 
-* restore the hourly cron to download the dmp of the DB
+* restore the hourly cron to fetch the dmp of the DB
 * run nsupdate procedure to repoint 'goc.egi.eu' back to
   'gocdb-base.esc.rl.ac.uk'
   MUST read /root/nsupdate_goc/nsupdateReadme.txt. 
