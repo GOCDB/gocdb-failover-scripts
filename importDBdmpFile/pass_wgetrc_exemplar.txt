@@ -1,5 +1,0 @@
-# Used by wget in the sripts
-# Only place user and password details in here since this file won't appear
-# on github/svn/whatever so we don't want to hide implementation.
-http_user = failover
-http_password = <your_password>
