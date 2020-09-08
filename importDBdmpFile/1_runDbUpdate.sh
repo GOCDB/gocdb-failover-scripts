@@ -14,7 +14,7 @@
 # David Meredith 
 
 # cd into dir where child scripts are located 
-cd /root/importDBdmpFile
+cd /root/gocdb-failover-scripts/importDBdmpFile
 
 #Setup our env vars 
 ####################################  
