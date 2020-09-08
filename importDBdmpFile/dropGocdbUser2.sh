@@ -19,9 +19,8 @@
 #
 # RESULT=$(sqlplus system/XXXXXXX <<- ENDSQL
 
-# PASSFILE is in "parfile" format for impdp
-PASSFILE=/root/gocdb-failover-scripts/importDBdmpFile/pass_file
-USER_PASS=$(cat "${PASSFILE}" | grep "^userid=" | cut -d "=" -f 2)
+# pass_file is in "parfile" format for impdp
+USER_PASS=$(cat "pass_file" | grep "^userid=" | cut -d "=" -f 2)
 
 # Need to exit gracefully if pass_file doesn't exist or
 # above filter fails
