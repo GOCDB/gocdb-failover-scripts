@@ -15,7 +15,7 @@
 # Sample that remaps to a different user/schema name: 
 #  impdp system/xxxx schemas=gocdb5 directory=dmpdir dumpfile=goc5dump.dmp REMAP_SCHEMA=gocdb5:gocdbnewuser remap_tablespace=GOCDB5:users table_exists_action=replace logfile=impGocDump.log
 
-impdp parfile=/root/importDBdmpFile/pass_file schemas=gocdb5 \
+impdp parfile=pass_file schemas=gocdb5 \
 	directory=dmpdir dumpfile=goc5dump.dmp \
 	remap_tablespace=GOCDB5:users table_exists_action=replace \
 	logfile=impGocDump.log
