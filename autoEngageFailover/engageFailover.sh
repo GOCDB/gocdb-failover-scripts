@@ -9,8 +9,8 @@
 # Note, after the main instance has been restored, you will need to manually
 # do the following steps:
 # Revert this swap:
-# ln -s /etc/pki/tls/private/goc.dl.ac.uk.key.pem /etc/pki/tls/private/hostkey.pem
-# ln -s /etc/grid-security/goc.dl.ac.uk.cert.pem /etc/grid-security/hostcert.pem
+# ln -s /etc/pki/tls/private/gocdb.hartree.stfc.ac.uk.key.pem /etc/pki/tls/private/hostkey.pem
+# ln -s /etc/grid-security/gocdb.hartree.stfc.ac.uk.cert.pem /etc/grid-security/hostcert.pem
 #
 # Restore hourly cron job:
 # mv /root/cronRunDbUpdate.sh /etc/cron.hourly/
@@ -29,10 +29,10 @@ importDBdmpFile=/root/importDBdmpFile
 failcount=0
 
 # server certificate / key
-# note, in production we will use the goc.dl.ac.uk server/host cert and key which has no
+# note, in production we will use the gocdb.hartree.stfc.ac.uk server/host cert and key which has no
 # password protecting the private key.
-userkey="/etc/pki/tls/private/goc.dl.ac.uk.key.pem"
-usercert="/etc/grid-security/goc.dl.ac.uk.cert.pem"
+userkey="/etc/pki/tls/private/gocdb.hartree.stfc.ac.uk.key.pem"
+usercert="/etc/grid-security/gocdb.hartree.stfc.ac.uk.cert.pem"
 
 # URL to monitor for the main production instance
 pingUrl="https://goc.egi.eu/portal/GOCDB_monitor/ops_monitor_check.php"
@@ -197,8 +197,8 @@ errorLogger "Swapping server certs"
 #ln -s /etc/grid-security/goc.egi.eu.cert.pem /etc/grid-security/hostcert.pem
 #ln -s /etc/pki/tls/private/goc.egi.eu.key.pem /etc/pki/tls/private/hostkey.pem
 ## note, after the main instance has been restored, you will need to revert this swap:
-## ln -s /etc/pki/tls/private/goc.dl.ac.uk.key.pem /etc/pki/tls/private/hostkey.pem
-## ln -s /etc/grid-security/goc.dl.ac.uk.cert.pem /etc/grid-security/hostcert.pem
+## ln -s /etc/pki/tls/private/gocdb.hartree.stfc.ac.uk.key.pem /etc/pki/tls/private/hostkey.pem
+## ln -s /etc/grid-security/gocdb.hartree.stfc.ac.uk.cert.pem /etc/grid-security/hostcert.pem
 
 #errorLogger "After server cert swap"
 

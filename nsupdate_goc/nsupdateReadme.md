@@ -7,12 +7,12 @@ DNS switching is used so that goc.egi.eu domain points to the failover at DL.
 Note:
 * we have the nsupdate keys safe
   * on gocdb-base.esc.rl.ac.uk in /root/nsupdate_goc
-  * on goc.dl.ac.uk in /root/nsupdate_goc
+  * on gocdb.hartree.stfc.ac.uk in /root/nsupdate_goc
 * Updated nsupdate files for controlling 'goc.egi.eu' are given below  
 
 
 ##Actions (Please read all below to understand these actions)
-* Logon as root on goc.dl.ac.uk or gocdb-base.esc.rl.ac.uk and cd to following dir
+* Logon as root on gocdb.hartree.stfc.ac.uk or gocdb-base.esc.rl.ac.uk and cd to following dir
 ```
 cd /root/nsupdate_goc
 ```

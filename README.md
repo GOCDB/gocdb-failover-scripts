@@ -136,7 +136,7 @@ Engage the failover now:
 You will need to manually revert the steps executed by the
 failover so the dns points back to the production instance
 and restore/restart the failover process. This includes:   
-* <strike>restore the symlinks to the goc.dl.ac.uk server cert and key
+* <strike>restore the symlinks to the gocdb.hartree.stfc.ac.uk server cert and key
   (see details below)</strike> (no longer needed as cert contains dual SAN)
 * restore the hourly cron to fetch the dmp of the DB
 * run nsupdate procedure to repoint 'goc.egi.eu' back to
@@ -178,9 +178,9 @@ mv cronRunDbUpdate.sh /etc/cron.hourly
 
 # Below server cert change no longer needed as cert contains dual SAN
 # This means a server restart is no longer needed.
-#echo Change server certificate and key back for goc.dl.ac.uk
-#ln -sf /etc/pki/tls/private/goc.dl.ac.uk.key.pem /etc/pki/tls/private/hostkey.pem
-#ln -sf /etc/grid-security/goc.dl.ac.uk.cert.pem /etc/grid-security/hostcert.pem
+#echo Change server certificate and key back for gocdb.hartree.stfc.ac.uk
+#ln -sf /etc/pki/tls/private/gocdb.hartree.stfc.ac.uk.key.pem /etc/pki/tls/private/hostkey.pem
+#ln -sf /etc/grid-security/gocdb.hartree.stfc.ac.uk.cert.pem /etc/grid-security/hostcert.pem
 #service httpd restart
 #service gocdb-autofailover start
 #service gocdb-autofailover status
