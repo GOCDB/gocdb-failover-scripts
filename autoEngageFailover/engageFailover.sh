@@ -1,23 +1,23 @@
 #!/bin/bash
 
-# Usage: ./autoEnageFailover.sh [now] 
-# where now is optional. If 'now' is specified as the first cmd line arg, then 
-# the failover is engaged immediately rather than on detection of a prolongued outage. 
-# 
-# Script will fail early if the lockFile from previous engage is present. 
+# Usage: ./autoEnageFailover.sh [now]
+# where now is optional. If 'now' is specified as the first cmd line arg, then
+# the failover is engaged immediately rather than on detection of a prolongued outage.
 #
-# Note, after the main instance has been restored, you will need to manually 
-# do the following steps: 
+# Script will fail early if the lockFile from previous engage is present.
+#
+# Note, after the main instance has been restored, you will need to manually
+# do the following steps:
 # Revert this swap:
 # ln -s /etc/pki/tls/private/goc.dl.ac.uk.key.pem /etc/pki/tls/private/hostkey.pem
 # ln -s /etc/grid-security/goc.dl.ac.uk.cert.pem /etc/grid-security/hostcert.pem
 #
-# Restore hourly cron job: 
-# mv /root/cronRunDbUpdate.sh /etc/cron.hourly/ 
+# Restore hourly cron job:
+# mv /root/cronRunDbUpdate.sh /etc/cron.hourly/
 
 
 # ====================Setup Variables===========================
-# setup log files  
+# setup log files
 updateLog=/root/autoEngageFailover/pingCheckLog.txt
 errorEngageFailoverLog=/root/autoEngageFailover/errorEngageFailoverLog.txt
 lockFile=/root/autoEngageFailover/engage.lock
@@ -28,9 +28,9 @@ importDBdmpFile=/root/importDBdmpFile
 # maintainthe current fail count
 failcount=0
 
-# server certificate / key 
-# note, in production we will use the goc.dl.ac.uk server/host cert and key which has no 
-# password protecting the private key. 
+# server certificate / key
+# note, in production we will use the goc.dl.ac.uk server/host cert and key which has no
+# password protecting the private key.
 userkey="/etc/pki/tls/private/goc.dl.ac.uk.key.pem"
 usercert="/etc/grid-security/goc.dl.ac.uk.cert.pem"
 
@@ -40,17 +40,17 @@ pingUrl="https://goc.egi.eu/portal/GOCDB_monitor/ops_monitor_check.php"
 # An external url to check that local network can reach outside
 externalPingUrl="http://google.co.uk"
 
-# number of secs between re-pings (600secs = 10mins) 
+# number of secs between re-pings (600secs = 10mins)
 sleepTime=600s
 
 # number of successive fails before invoking failover (30 * 10mins = 300mins = 5hrs)
 failCountLimit=30
 
-# email subject and to address for notification that failover is engaged 
+# email subject and to address for notification that failover is engaged
 SUBJECT="gocdb failover warning"
 TO="some.body@world.com,a.n.other@world.com"
 
-# Determine whether to engage the failover immediately 
+# Determine whether to engage the failover immediately
 ENGAGENOW="false"
 
 # =====================================================
@@ -65,7 +65,7 @@ if [ -n "$1" ] ; then
 fi
 
 
-# email all given args to $TO     
+# email all given args to $TO
 function email {
 /bin/mail -s "$SUBJECT" "$TO" <<EOF
 Time: `date`
@@ -74,7 +74,7 @@ EOF
 }
 
 
-# log all given args to the udpate log 
+# log all given args to the udpate log
 function logger {
   echo $*>> $updateLog
 }
@@ -132,28 +132,28 @@ fi
 
 
 
-# Create the log if it don't already exist 
-touch $updateLog 
+# Create the log if it don't already exist
+touch $updateLog
 touch $errorEngageFailoverLog
 logger "==============================Starting up $(date)====================================="
 errorLogger "===================================Starting up $(date)=================================="
 
 # loop if not engaging now
 if [ $ENGAGENOW == "false" ] ; then
-	# loop while global failcount is less than x 
+	# loop while global failcount is less than x
 	while [ $failcount -lt $failCountLimit ]
 	do
-	    pingCode=$(pingcheck) 
+	    pingCode=$(pingcheck)
 	    if [ $pingCode != 0 ]; then
-		# if ping failed then increment failcount  
+		# if ping failed then increment failcount
 		(( failcount++ ))
 	    else
 		# else if ping worked re-set failcount (back) to zero
 		failcount=0
-		#logger "ping ok $(date) : $pingUrl" 
+		#logger "ping ok $(date) : $pingUrl"
 	    fi
-	 
-	    #echo "failcount is: $failcount, pingcode is: $pingCode" 
+
+	    #echo "failcount is: $failcount, pingcode is: $pingCode"
 	    sleep $sleepTime
 	done
 fi
@@ -162,20 +162,20 @@ fi
 # 'N' consecutive failures encountered. Next invoke failover script
 # =================================================================
 
-# - log the date 
+# - log the date
 errorLogger "=============Start Failover Swtich================="
 errorLogger "Detected successive failues on $(date)"
 errorLogger "Starting engage failover"
 
 email "Detected successive failures. Attempting to engage the failover - please see the logs: $updateLog $errorEngageFailoverLog"
 
-# While developing, force an exit here (will have to practice below using 
-# the provided test.egi.eu goc domain) 
+# While developing, force an exit here (will have to practice below using
+# the provided test.egi.eu goc domain)
 #exit 0
 
 
 
-# - Test that the last goc.dmp imported ok by parsing /root/importDBdmpFile/updateLog.txt 
+# - Test that the last goc.dmp imported ok by parsing /root/importDBdmpFile/updateLog.txt
 #cd /root/importDBdmpFile
 cd $importDBdmpFile
 if [ "$(tail -1 ./updateLog.txt)" != "completed ok" ]; then
@@ -185,18 +185,18 @@ fi
 
 errorLogger "Attempting to move cron"
 
-# - Move hourly cron job to disable (don't want this to execute while in failover mode) 
-mv /etc/cron.hourly/cronRunDbUpdate.sh /root 
+# - Move hourly cron job to disable (don't want this to execute while in failover mode)
+mv /etc/cron.hourly/cronRunDbUpdate.sh /root
 
 errorLogger "Swapping server certs"
 
-## - Swap server cert 
+## - Swap server cert
 ## Not needed e.g. if your server cert has a dual SAN
-#unlink /etc/grid-security/hostcert.pem 
+#unlink /etc/grid-security/hostcert.pem
 #unlink /etc/pki/tls/private/hostkey.pem
 #ln -s /etc/grid-security/goc.egi.eu.cert.pem /etc/grid-security/hostcert.pem
 #ln -s /etc/pki/tls/private/goc.egi.eu.key.pem /etc/pki/tls/private/hostkey.pem
-## note, after the main instance has been restored, you will need to revert this swap: 
+## note, after the main instance has been restored, you will need to revert this swap:
 ## ln -s /etc/pki/tls/private/goc.dl.ac.uk.key.pem /etc/pki/tls/private/hostkey.pem
 ## ln -s /etc/grid-security/goc.dl.ac.uk.cert.pem /etc/grid-security/hostcert.pem
 
@@ -219,15 +219,15 @@ errorLogger "Swapping server certs"
 #fi
 #
 #
-## Restart apache 
+## Restart apache
 #errorLogger "Restarting apache"
-#service httpd restart 
+#service httpd restart
 
 
-# Finally create the lockFile to indicate the failover ran ok 
+# Finally create the lockFile to indicate the failover ran ok
 touch $lockFile
 
 email "Failover script completed"
 
-# End 
+# End
 errorLogger "==========================End failover switch======================="

@@ -8,7 +8,7 @@ update add goc.egi.eu. 60 CNAME goc.dl.ac.uk.
 show
 send
 EOF
-#echo 
+#echo
 #echo "verifying the change ..."
 #echo
 #nslookup goc.egi.eu ns.muni.cz
