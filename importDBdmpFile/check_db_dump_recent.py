@@ -62,10 +62,10 @@ try:
         print("An error occured: {0}".format(last_line))
         sys.exit(RETURN_CODE_CRITICAL)
 
+    print("The failover process last suceeded at %s" % last_success)
     # If the failover process hasn't suceeded in a while, the timestamp will be
     # old and we want to treat that as an error.
     if last_success < (datetime.now(timezone.utc) - timedelta(minutes=GRACE_PERIOD)):
-        print("Failover process last suceeded at %s" % last_success)
         sys.exit(RETURN_CODE_CRITICAL)
 
     # If we get here, it's all good man.
