@@ -1,0 +1,6 @@
+# See https://mariadb.com/kb/en/mysql-command-line-client/
+# Any valid mysql default value can be provided, but the
+# minimum options required are user and password.
+[client]
+user=usuallyroot
+password=myBadPassword
