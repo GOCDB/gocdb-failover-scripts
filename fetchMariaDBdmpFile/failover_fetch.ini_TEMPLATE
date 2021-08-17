@@ -1,0 +1,59 @@
+[local]
+# If this file exists no fetch will be performed. An error status
+# is returned and the file contents listed.
+noFetch=/etc/gocdb/nofailoverfetch
+
+# Specify the final dump location
+# If this file already exists if will be moved to <dumpFile>_old
+# before being replaced with the contents of "[client-mariadb] result-file"
+dumpFile=/path/to/db/dump.sql
+
+# Specify name of database to dump
+# (cannot be specified in Mariadb options section)
+databaseName=gocdb
+
+# Options for mysqldump
+# See https://mariadb.com/kb/en/mariadb-dumpmysqldump/
+[client-mariadb]
+host=somehost.ac.uk
+user=dbuser
+password=dbpassword
+
+# Temporary file for the dump to be made into. If the
+# dump completes successfully this will be moved to
+# location specified in "[local] dumpFile"
+result-file=/tmp/dump.sql
+
+# Enable to generate an error logfile
+#-log-error=/path/to/failover_backup_error.log
+# Optional verbose logging to log-error
+#-verbose
+
+single-transaction
+routines
+events
+
+# TODO when supported
+#ssl
+#ssl-verify-server-cert
+
+[logs]
+
+# Destination path for logged output
+# Leave blank to send to STDOUT
+file=
+
+# Log level:
+# 'ERROR' - log file only be updated if there is an error
+# 'INFO' - log file always updated with completion message or error
+# 'DEBUG' - log file will contain a step=by-step summary
+level=INFO
+
+# Formatting string for the logger module.
+format=%%(asctime)s %%(levelname)s:%%(message)s
+
+# Date format (see format asctime) to the output log:
+# Syslog
+# dateFormat=%%b %%d %%I:%%M:%%S
+# ISO8601
+dateFormat=%%Y-%%m-%%dT%%H:%%M:%%S%%z

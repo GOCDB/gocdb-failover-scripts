@@ -1,0 +1,64 @@
+[remote]
+
+# Hostname of remote host from which to fetch the dump file
+host=somehost.somedomain.uk
+
+# Remote user. Note ssh access must be without password i.e. by key
+user=someuser
+
+# Path on the remote host from which to fetch the dump file
+# If the suffix .zip is used the archive will be inflated and must
+# contain only a single .sql dump
+path=/path/to/db/dump.sql
+
+[local]
+
+# A local file which, if it exists, causes the script to parse its configuration
+# and then exit. Return status is zero
+noImport=/etc/gocdb/nofailoverimport
+
+# mysql retry count. The mysql command will be tried up to this many times
+# before failure is reported. (10 = ~1 minute)
+retryCount=10
+
+# Local 'working' directory to stage and/or inflate the dump file into.
+workDir=/tmp
+
+# Local directory into which successfully installed dumps are archived
+# a _goc5dump
+archiveDir=/path/to/archive/directory
+
+# Time format string to generate archived filename
+format=_goc5dump_%%y-%%m-%%d_%%H_%%M_%%S
+
+[client-mariadb]
+
+# Options read by mysql for executing the import.
+# See https://mariadb.com/kb/en/mysql-command-line-client/
+# Any valid mysql default value can be provided, but the
+# minimum options required are user and password.
+host=database-server.domain.ac.uk
+database=gocdb
+user=usuallyroot
+password=myBadPassword
+
+[logs]
+
+# Destination path for logged output
+# Leave blank to send to STDOUT
+file=
+
+# Log level:
+# 'ERROR' - log file only be updated if there is an error
+# 'INFO' - log file always updated with completion message or error
+# 'DEBUG' - log file will contain a step=by-step summary
+level=INFO
+
+# Formatting string for the logger module.
+format=%%(asctime)s %%(levelname)s:%%(message)s
+
+# Date format (see format asctime) to the output log:
+# Syslog
+# dateFormat=%%b %%d %%I:%%M:%%S
+# ISO8601
+dateFormat=%%Y-%%m-%%dT%%H:%%M:%%S%%z
