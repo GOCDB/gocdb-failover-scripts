@@ -25,7 +25,7 @@ This repo contains the service and cron scripts used to run a failover gocdb ins
       |_ 1_runDbUpdate.sh     # MAIN SCRIPT that can be called from cron, invokes child scripts below
       |_ ora11gEnvVars.sh     #   Setup oracle env
       |_ getDump.sh           #   Fetch a .dmp of the production data
-      |_ dropGocdbUser.sh     #   Drops the current DB schema
+      |_ dropGocdbUser2.sh    #   Drops the current DB schema
       |_ loadData.sh          #   Load the last successfully fetched DB dmp into the RDBMS
       |_ gatherStats.sh       #   Oracle gathers stats to re-index
       |_ pass_file_exemplar.txt   #   Sample pwd file for DB (rename to pass_file)
