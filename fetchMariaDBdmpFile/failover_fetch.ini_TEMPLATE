@@ -33,7 +33,7 @@ single-transaction
 routines
 events
 
-# TODO when supported
+# Uncomment the following options to enable TLS connections to the database server
 #ssl
 #ssl-verify-server-cert
 

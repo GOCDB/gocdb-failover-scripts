@@ -189,20 +189,16 @@ def archiveDump(importPath, archive, format):
     if not os.path.isdir(archive):
         raise Exception('Archive directory ' + archive + ' does not exist.')
 
-    archivePath = archive + '/' + strftime(format, gmtime())
-
-    logging.debug('moving ' + importPath + ' to ' + archivePath)
-
-    shutil.move(importPath, archivePath)
-
     logging.debug('removing all .dmp files in ' + archive)
 
     for oldDump in glob.iglob(archive + '/*.dmp'):
         os.remove(oldDump)
 
-    shutil.move(archivePath, archivePath + '.dmp')
+    archivePath = archive + '/' + strftime(format, gmtime()) + '.dmp'
 
-    logging.debug('moving ' + archivePath + ' to ' + archivePath + '.dmp')
+    logging.debug('moving ' + importPath + ' to ' + archivePath)
+
+    shutil.move(importPath, archivePath)
 
     logging.debug('archive completed')
 

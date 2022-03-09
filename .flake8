@@ -1,3 +1,0 @@
-[flake8]
-# E501: Ignore line length limit of 79
-ignore = E501
