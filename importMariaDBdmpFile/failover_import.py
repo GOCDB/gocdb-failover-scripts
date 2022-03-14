@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-'''
+"""
+Fetch and install a database dump file.
+
 Retrieve a mysqldump file from a given location on a remote host and use mysql
 to import the database locally. The remote file can be compressed as a .zip
 archive, in which case it is inflated. After successful load, the dump file
 is archived.
-'''
+"""
 import argparse
 import configparser
 import glob
@@ -18,11 +20,10 @@ import zipfile
 
 
 class Conf:
-    '''
-    Make accessible the parameters, configuration and set up logging
-    '''
-    def __init__(self, path):
+    """Wrapper class for the config parameters."""
 
+    def __init__(self, path):
+        """Read in the parameters, configuration and set up logging."""
         config = configparser.ConfigParser()
 
         config.read(path)
@@ -55,7 +56,7 @@ class Conf:
         self.checkPerms(self.mysqlOptionsPath)
 
     def checkPerms(self, path):
-
+        """Check security of permissions on the configuration file with password."""
         if not os.path.exists(path):
             raise Exception('mysql import options/password file: ' + path + ' does not exist. Import terminated.')
 
@@ -66,6 +67,7 @@ class Conf:
 
 
 def getConfig():
+    """Set up the single argument."""
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', default='./importMariaDBdmpFile/config.ini', )
 
@@ -78,10 +80,7 @@ def getConfig():
 
 
 def runCommand(args):
-    '''
-    Run the given argument array as a command
-    '''
-
+    """Run the given argument array as a command."""
     logging.debug('running command:' + ' '.join(args))
 
     try:
@@ -93,10 +92,7 @@ def runCommand(args):
 
 
 def getDump(remoteUser, remoteHost, remotePath, localDir):
-    '''
-    Fetch the file from the remote and save it locally
-    '''
-
+    """Fetch the file from the remote and save it locally."""
     logging.debug('fetching remote file ... ')
 
     # there is clear text personal data in the dump so try to make sure the permissions are appropriate
@@ -142,9 +138,7 @@ def getDump(remoteUser, remoteHost, remotePath, localDir):
 
 
 def importDB(optionsPath, importPath, retryCount):
-    '''
-    Use mysql to import the file
-    '''
+    """Use mysql to import the file."""
     # Tested using dump generated using the command
     # > mysqldump --databases --lock-tables --dump-date \
     #             --add-locks -p gocdb -r /tmp/dbdump.sql
@@ -180,10 +174,7 @@ def importDB(optionsPath, importPath, retryCount):
 
 
 def archiveDump(importPath, archive, format):
-    '''
-    Save the dump file in the archive directory
-    '''
-
+    """Save the dump file in the archive directory."""
     logging.debug('archiving dump file ...')
 
     if not os.path.isdir(archive):
@@ -204,7 +195,7 @@ def archiveDump(importPath, archive, format):
 
 
 def main():
-
+    """Execute the program."""
     try:
         args = getConfig()
 

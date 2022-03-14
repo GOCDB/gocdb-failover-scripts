@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-'''
-Use the mysqldump utility to execute a (remote) dump of a database.
-and store the dump locally, keeping a copy of the previous dump.
-'''
+"""
+Perform a dump of a (remote) database and save locally.
+
+Use the mysqldump utility to execute a (remote) database dump
+and store the result locally, keeping a copy of the previous dump.
+"""
 import argparse
 import configparser
 import logging
@@ -13,11 +15,10 @@ import sys
 
 
 class Conf:
-    '''
-    Make accessible the parameters, configuration and set up logging
-    '''
-    def __init__(self, path):
+    """Wrapper class for the config parameters."""
 
+    def __init__(self, path):
+        """Read in the parameters, configuration and set up logging."""
         config = configparser.ConfigParser(allow_no_value=True)
 
         config.read(path)
@@ -46,9 +47,9 @@ class Conf:
         self.checkPerms(self.mysqlOptionsPath)
 
     def checkPerms(self, path):
-
+        """Check security of permissions on the configuration file with password."""
         if not os.path.exists(path):
-            raise Exception('mysql import options/password file: ' + path + ' does not exist. Import terminated.')
+            raise Exception('mysqldump options/password file: ' + path + ' does not exist. Import terminated.')
 
         # The password file must not be world-readable
 
@@ -57,6 +58,7 @@ class Conf:
 
 
 def getConfig():
+    """Set up the single argument."""
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', default='./fetchMariaDBdmpFile/failover_fetch.ini')
 
@@ -69,10 +71,7 @@ def getConfig():
 
 
 def runCommand(args):
-    '''
-    Run the given argument array as a command
-    '''
-
+    """Run the given argument array as a command."""
     logging.debug('running command:' + ' '.join(args))
 
     try:
@@ -84,7 +83,7 @@ def runCommand(args):
 
 
 def runDump(mysqlOptionsPath, databaseName):
-
+    """Run the dump."""
     logging.debug('running mysqldump ... ')
 
     args = ['/usr/bin/mysqldump',
@@ -97,7 +96,7 @@ def runDump(mysqlOptionsPath, databaseName):
 
 
 def archiveDump(resultFile, dumpFile):
-
+    """Archive the dump file."""
     logging.debug('archiving dump ...')
 
     destination = dumpFile + '_old'
@@ -114,7 +113,7 @@ def archiveDump(resultFile, dumpFile):
 
 
 def main():
-
+    """Execute the program."""
     try:
         args = getConfig()
 
