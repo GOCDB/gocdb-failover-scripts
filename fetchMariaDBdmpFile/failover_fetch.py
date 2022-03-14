@@ -44,17 +44,20 @@ class Conf:
                                 datefmt=config.get('logs', 'dateFormat'),
                                 level=config.get('logs', 'level').upper())
 
-        self.checkPerms(self.mysqlOptionsPath)
+        checkPerms(self.mysqlOptionsPath)
 
-    def checkPerms(self, path):
-        """Check security of permissions on the configuration file with password."""
-        if not os.path.exists(path):
-            raise Exception('mysqldump options/password file: ' + path + ' does not exist. Import terminated.')
 
-        # The password file must not be world-readable
+def checkPerms(path):
+    """Check security of permissions on the configuration file with password."""
+    if not os.path.exists(path):
+        raise Exception('mysqldump options/password file: '
+                        + path
+                        + ' does not exist. Import terminated.')
 
-        if (os.stat(path).st_mode & (os.R_OK | os.W_OK | os.X_OK) != 0):
-            raise Exception('Open permissions found on database password file. Import terminated.')
+    # The password file must not be world-readable
+
+    if os.stat(path).st_mode & (os.R_OK | os.W_OK | os.X_OK) != 0:
+        raise Exception('Open permissions found on database password file. Import terminated.')
 
 
 def getConfig():
@@ -72,14 +75,14 @@ def getConfig():
 
 def runCommand(args):
     """Run the given argument array as a command."""
-    logging.debug('running command:' + ' '.join(args))
+    logging.debug('running command: %s', ' '.join(args))
 
     try:
         subprocess.check_output(args, stderr=subprocess.STDOUT, shell=False)
 
-    except subprocess.CalledProcessError as p:
-        logging.error('command failed: ' + ' '.join(args))
-        raise Exception(p.stdout.rstrip())
+    except subprocess.CalledProcessError as pErr:
+        logging.error('command failed: %s', ' '.join(args))
+        raise Exception(pErr.stdout.rstrip()) from pErr
 
 
 def runDump(mysqlOptionsPath, databaseName):
@@ -120,9 +123,9 @@ def main():
         cnf = Conf(args.config)
 
         if os.path.isfile(cnf.noFetch):
-            logging.error(cnf.noFetch + ' exists. No fetch attempted. File contents -')
-            with open(cnf.noFetch) as f:
-                logging.error(f.read().rstrip())
+            logging.error('%s exists. No fetch attempted. File contents -', cnf.noFetch)
+            with open(cnf.noFetch, encoding='utf-8') as fileText:
+                logging.error(fileText.read().rstrip())
             return 1
 
         runDump(cnf.mysqlOptionsPath, cnf.databaseName)

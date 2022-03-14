@@ -53,17 +53,20 @@ class Conf:
                                 datefmt=config.get('logs', 'dateFormat'),
                                 level=config.get('logs', 'level').upper())
 
-        self.checkPerms(self.mysqlOptionsPath)
+        checkPerms(self.mysqlOptionsPath)
 
-    def checkPerms(self, path):
-        """Check security of permissions on the configuration file with password."""
-        if not os.path.exists(path):
-            raise Exception('mysql import options/password file: ' + path + ' does not exist. Import terminated.')
 
-        # The password file must not be world-readable
+def checkPerms(path):
+    """Check security of permissions on the configuration file with password."""
+    if not os.path.exists(path):
+        raise Exception('mysql import options/password file: '
+                        + path
+                        + ' does not exist. Import terminated.')
 
-        if (os.stat(path).st_mode & (os.R_OK | os.W_OK | os.X_OK) != 0):
-            raise Exception('Open permissions found on database password file. Import terminated.')
+    # The password file must not be world-readable
+
+    if os.stat(path).st_mode & (os.R_OK | os.W_OK | os.X_OK) != 0:
+        raise Exception('Open permissions found on database password file. Import terminated.')
 
 
 def getConfig():
@@ -81,21 +84,22 @@ def getConfig():
 
 def runCommand(args):
     """Run the given argument array as a command."""
-    logging.debug('running command:' + ' '.join(args))
+    logging.debug('running command: %s', ' '.join(args))
 
     try:
         subprocess.check_output(args, stderr=subprocess.STDOUT, shell=False)
 
-    except subprocess.CalledProcessError as p:
-        logging.error('command failed: ' + ' '.join(args))
-        raise Exception(p.output.rstrip())
+    except subprocess.CalledProcessError as pErr:
+        logging.error('command failed: %s', ' '.join(args))
+        raise Exception(pErr.output.rstrip()) from pErr
 
 
 def getDump(remoteUser, remoteHost, remotePath, localDir):
     """Fetch the file from the remote and save it locally."""
     logging.debug('fetching remote file ... ')
 
-    # there is clear text personal data in the dump so try to make sure the permissions are appropriate
+    # there is clear text personal data in the dump so try to make
+    # sure the permissions are appropriate
     os.umask(0o077)
 
     if remoteUser == '' and remoteHost == '':
@@ -106,7 +110,8 @@ def getDump(remoteUser, remoteHost, remotePath, localDir):
                 ]
     else:
         # scp will replace the local file contents if it already exists
-        # We do not run with '-q' to allow meaningful authentication error messages to be logged.
+        # We do not run with '-q' to allow meaningful authentication
+        # error messages to be logged.
         args = ['/usr/bin/scp',
                 '-o', 'PasswordAuthentication=no',
                 remoteUser + '@' + remoteHost + ':' + remotePath,
@@ -123,15 +128,15 @@ def getDump(remoteUser, remoteHost, remotePath, localDir):
 
     if suffix == '.zip':
         logging.debug('inflating fetched zip archive ...')
-        zip = zipfile.ZipFile(localPath, 'r')
-        zipContents = zip.namelist()
+        archive = zipfile.ZipFile(localPath, 'r')
+        zipContents = archive.namelist()
         if len(zipContents) != 1:
             raise Exception('Error: .zip archive must contain only 1 file.')
-        logging.debug('inflating to ' + localDir)
-        zip.extractall(localDir)
-        localPath = localDir + '/' + zip.namelist()[0]
-        logging.debug('inflated ' + localPath)
-        zip.close
+        logging.debug('inflating to %s', localDir)
+        archive.extractall(localDir)
+        localPath = localDir + '/' + archive.namelist()[0]
+        logging.debug('inflated %s', localPath)
+        archive.close()
         logging.debug('zip archive inflation completed')
 
     return localPath
@@ -156,16 +161,14 @@ def importDB(optionsPath, importPath, retryCount):
             logging.debug('loading database from dump file ...')
             runCommand(args)
             break
-        except Exception as exc:
+        except subprocess.CalledProcessError as exc:
             logging.debug('mysql command import failed.')
             if count < retryCount:
-                logging.error(str(sys.exc_info()[1]) + '. Retrying.')
+                logging.error('%s. Retrying.', str(sys.exc_info()[1]))
                 snooze = min(0.1 * (pow(2, count) - 1), 20)
-                logging.debug('sleeping (' + '{:.2f}'.format(snooze) + 'secs)')
+                logging.debug('sleeping (%s secs)', f'{snooze:.2f}')
                 sleep(snooze)
-                logging.debug('retry ' + str(count) + ' of ' + str(retryCount))
-                # insert backoff time wait here
-                pass
+                logging.debug('retry %s of %s', str(count), str(retryCount))
             else:
                 logging.debug('exceeded retry count for database load failures')
                 raise exc
@@ -173,19 +176,19 @@ def importDB(optionsPath, importPath, retryCount):
     logging.debug('database load completed')
 
 
-def archiveDump(importPath, archive, format):
+def archiveDump(importPath, archive, timeFormat):
     """Save the dump file in the archive directory."""
     logging.debug('archiving dump file ...')
 
     if not os.path.isdir(archive):
         raise Exception('Archive directory ' + archive + ' does not exist.')
 
-    logging.debug('removing all .dmp files in ' + archive)
+    logging.debug('removing all .dmp files in %s', archive)
 
     for oldDump in glob.iglob(archive + '/*.dmp'):
         os.remove(oldDump)
 
-    archivePath = archive + '/' + strftime(format, gmtime()) + '.dmp'
+    archivePath = archive + '/' + strftime(timeFormat, gmtime()) + '.dmp'
 
     logging.debug('moving ' + importPath + ' to ' + archivePath)
 
@@ -202,9 +205,9 @@ def main():
         cnf = Conf(args.config)
 
         if os.path.isfile(cnf.noImport):
-            logging.error(cnf.noImport + ' exists. No import attempted. File contents -')
-            with open(cnf.noImport) as f:
-                logging.error(f.read().rstrip())
+            logging.error('%s exists. No import attempted. File contents -', cnf.noImport)
+            with open(cnf.noImport, encoding='utf-8') as fileText:
+                logging.error(fileText.read().rstrip())
             return 1
 
         dump = getDump(cnf.remoteUser, cnf.remoteHost, cnf.remotePath, cnf.workDir)
