@@ -29,7 +29,7 @@ RETURN_CODE_UNKNOWN = 3
 
 # This script will allow the latest run of the failover process to be this many
 # minutes ago without returning RETURN_CODE_CRITICAL.
-GRACE_PERIOD = 70
+GRACE_PERIOD_MINUTES = 70
 
 # Wrap everything in a try...except block so we can return RETURN_CODE_UNKNOWN
 # on a unexpected failure.
@@ -65,7 +65,8 @@ try:
     print("The failover process last suceeded at %s" % last_success)
     # If the failover process hasn't suceeded in a while, the timestamp will be
     # old and we want to treat that as an error.
-    if last_success < (datetime.now(timezone.utc) - timedelta(minutes=GRACE_PERIOD)):
+    grace_period_timedelta = timedelta(minutes=GRACE_PERIOD_MINUTES)
+    if last_success < (datetime.now(timezone.utc) - grace_period_timedelta):
         sys.exit(RETURN_CODE_CRITICAL)
 
     # If we get here, it's all good man.
