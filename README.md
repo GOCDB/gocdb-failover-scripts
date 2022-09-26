@@ -31,6 +31,7 @@ This repo contains the service and cron scripts used to run a failover gocdb ins
       |_ loadData.sh          #   Load the last successfully fetched DB dmp into the RDBMS
       |_ gatherStats.sh       #   Oracle gathers stats to re-index
       |_ pass_file_exemplar.txt   #   Sample pwd file for DB (rename to pass_file)
+      |_ check_db_dump_recent.py  #   Checks the failover process is happening
 
   getMariaDBdmpFile/
       |_failover_fetch.py             #   Main script
