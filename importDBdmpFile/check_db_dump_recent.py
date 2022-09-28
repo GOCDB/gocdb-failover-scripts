@@ -29,7 +29,7 @@ RETURN_CODE_UNKNOWN = 3
 
 # This script will allow the latest run of the failover process to be this many
 # minutes ago without returning RETURN_CODE_CRITICAL.
-GRACE_PERIOD_MINUTES = 70
+GRACE_PERIOD_MINUTES = 447
 
 # Wrap everything in a try...except block so we can return RETURN_CODE_UNKNOWN
 # on a unexpected failure.
