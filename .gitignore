@@ -1,0 +1,2 @@
+# Lower likelihood of DNS keys accidentally getting tracked by Git.
+*key.conf
