@@ -1,2 +1,5 @@
 # Lower likelihood of DNS keys accidentally getting tracked by Git.
 *key.conf
+
+# Lower likelihood of ORACLE DB passwords from accidentally getting tracked by Git.
+pass_file
