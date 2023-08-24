@@ -5,18 +5,6 @@ This file contains a script to check the GOCDB failover process is happening.
 
 Specifically, it checks the log file passed as the first arguement for evidence
 the process has suceeded / failed recently.
-
-It assumes the log file is formatted as follows:
-2021-08-02T08:40:01+0000
-An Error
-2021-08-02T09:40:01+0000
-An Error
-Another Error
-2021-08-02T10:40:01+0000
-2021-08-02T11:40:01+0000
-2021-08-02T12:40:01+0000
-2021-08-02T13:40:01+0000
-2021-08-02T14:40:01+0000
 """
 from datetime import datetime, timedelta
 import sys
