@@ -71,7 +71,7 @@ class CheckDBDumpRecent():
             print("The failover process last suceeded at %s" % last_success)
             # If the failover process hasn't suceeded in a while, the
             # timestamp will be old and we want to treat that as an error.
-            if last_success < (datetime.now(timezone.utc) - self.GRACE_PERIOD):
+            if last_success < (datetime.now() - self.GRACE_PERIOD):
                 return RETURN_CODE_CRITICAL
 
             # If we get here, it's all good man.
