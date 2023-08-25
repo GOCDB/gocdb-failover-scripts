@@ -1,0 +1,43 @@
+name: Run Unit Tests
+
+on: [push, pull_request]
+
+jobs:
+  unit-test:
+    name: Python ${{ matrix.python-version }} ${{ matrix.os }} test
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.6 is the version readily available on EL7. Requries ubuntu-20.04.
+        # 3.9 would seem to be the highest python version readily available
+        # on EL8.
+        # Also test against the very latest 3 series available.
+        python-version: [3.6, 3.9, 3.x]
+        os: [ubuntu-20.04, ubuntu-latest]
+        exclude:
+        - os: ubuntu-latest
+          python-version: 3.6
+        - os: ubuntu-20.04
+          python-version: 3.9
+        - os: ubuntu-20.04
+          python-version: 3.x
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Set up dependencies
+      run: pip install -r requirements-test.txt
+
+    - name: Run unit tests
+      run: coverage run --branch --source=check -m unittest discover --buffer
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3.1.4

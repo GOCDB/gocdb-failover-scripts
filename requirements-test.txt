@@ -1,0 +1,2 @@
+# Requirements for the unit and coverage tests only.
+codecov
