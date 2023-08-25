@@ -213,6 +213,19 @@ class TestCheckDBDumpRecent(unittest.TestCase):
 
         self._run_test(log_line_list, check.check_db_dump_recent.RETURN_CODE_CRITICAL)
 
+    def test_no_log(self):
+        """Test the check script given a non existent input."""
+        return_code = self.test_checker.run("/not/a/file")
+
+        self.assertEqual(
+            return_code,
+            check.check_db_dump_recent.RETURN_CODE_CRITICAL,
+            "Expected code %s, but got %s." % (
+                check.check_db_dump_recent.RETURN_CODE_CRITICAL,
+                return_code,
+            ),
+        )
+
     def _list_to_temp_file(self, input_list):
         """Take the given list and write it to self.temp_file_path."""
         with open(self.temp_file_path, "w") as temp_file:
