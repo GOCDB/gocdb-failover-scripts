@@ -55,7 +55,7 @@ file=
 level=INFO
 
 # Formatting string for the logger module.
-format=%%(asctime)s %%(levelname)s:%%(message)s
+format=%%(asctime)s %%(levelname)s: %%(message)s
 
 # Date format (see format asctime) to the output log:
 # Syslog

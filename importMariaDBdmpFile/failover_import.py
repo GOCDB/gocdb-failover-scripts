@@ -53,6 +53,10 @@ class Conf:
                                 datefmt=config.get('logs', 'dateFormat'),
                                 level=config.get('logs', 'level').upper())
 
+        # Ensure all python log times are expressed in UTC, for simplicity and
+        # consistency with other timestamps in the relevant log files.
+        logging.Formatter.converter = gmtime
+
         checkPerms(self.mysqlOptionsPath)
 
 
