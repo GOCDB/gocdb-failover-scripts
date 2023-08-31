@@ -3,8 +3,8 @@
 """
 This file contains a script to check the GOCDB failover process is happening.
 
-Specifically, it checks the log file passed as the first arguement for evidence
-the process has suceeded / failed recently.
+Specifically, it checks the log file passed as the first argument for evidence
+the process has succeeded / failed recently.
 """
 from datetime import datetime, timedelta
 import sys
@@ -56,8 +56,8 @@ class CheckDBDumpRecent():
                 print("An error occured: {0}".format(last_line))
                 return RETURN_CODE_CRITICAL
 
-            print("The failover process last suceeded at %s" % last_success)
-            # If the failover process hasn't suceeded in a while, the
+            print("The failover process last succeeded at %s" % last_success)
+            # If the failover process hasn't succeeded in a while, the
             # timestamp will be old and we want to treat that as an error.
             if last_success < (datetime.now() - self.GRACE_PERIOD):
                 return RETURN_CODE_CRITICAL
