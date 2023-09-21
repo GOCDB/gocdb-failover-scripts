@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 3.6 is the version readily available on EL7. Requries ubuntu-20.04.
+        # 3.6 is the version readily available on EL7. Requires ubuntu-20.04.
         # 3.9 would seem to be the highest python version readily available
         # on EL8.
         # Also test against the very latest 3 series available.

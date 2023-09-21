@@ -23,7 +23,7 @@ class CheckDBDumpRecent():
         # successful run was this long ago.
         self.GRACE_PERIOD = grace_period
 
-        # The string the database update script outputs on a sucessful restore.
+        # The string the database update script outputs on a successful restore.
         self.OK_STRING = "completed ok"
 
     def run(self, log_file_path):
@@ -45,7 +45,7 @@ class CheckDBDumpRecent():
 
                 return RETURN_CODE_CRITICAL
 
-            # Assume the failover processs has never run, then attempt to
+            # Assume the failover process has never run, then attempt to
             # disprove that by looping through the logs.
             last_success = None
             for line in reversed(line_list):
