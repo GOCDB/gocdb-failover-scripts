@@ -129,7 +129,10 @@ class TestCheckDBDumpRecent(unittest.TestCase):
             "2023-01-01T11:41:01+0000 ERROR: Yet Another Error",
         ]
 
-        self._run_test(log_line_list, check_db_dump_recent.RETURN_CODE_CRITICAL)
+        self._run_test(
+            log_line_list,
+            check_db_dump_recent.RETURN_CODE_CRITICAL
+        )
 
     def test_never_successful_mariadb(self):
         """Test the check script given a lack of success, ever."""
@@ -143,7 +146,10 @@ class TestCheckDBDumpRecent(unittest.TestCase):
             "2023-01-01T11:41:01+0000 ERROR: Yet another Error",
         ]
 
-        self._run_test(log_line_list, check_db_dump_recent.RETURN_CODE_CRITICAL)
+        self._run_test(
+            log_line_list,
+            check_db_dump_recent.RETURN_CODE_CRITICAL
+        )
 
     def test_recent_success_oracle(self):
         """Tests the check script given a recent, successful, run."""
@@ -159,7 +165,10 @@ class TestCheckDBDumpRecent(unittest.TestCase):
             "2023-01-01T11:41:01+0000 INFO: completed ok",
         ]
 
-        self._run_test(log_line_list, check_db_dump_recent.RETURN_CODE_OK)
+        self._run_test(
+            log_line_list,
+            check_db_dump_recent.RETURN_CODE_OK,
+        )
 
     def test_recent_failure_oracle(self):
         """Tests the check script given a recent, unsuccessful, run."""
@@ -177,7 +186,10 @@ class TestCheckDBDumpRecent(unittest.TestCase):
             "Yet another Error",
         ]
 
-        self._run_test(log_line_list, check_db_dump_recent.RETURN_CODE_OK)
+        self._run_test(
+            log_line_list,
+            check_db_dump_recent.RETURN_CODE_OK,
+        )
 
     def test_old_success_oracle(self):
         """Test the check script given an old, successful, run."""
@@ -191,7 +203,10 @@ class TestCheckDBDumpRecent(unittest.TestCase):
             "Yet Another Error",
         ]
 
-        self._run_test(log_line_list, check_db_dump_recent.RETURN_CODE_CRITICAL)
+        self._run_test(
+            log_line_list,
+            check_db_dump_recent.RETURN_CODE_CRITICAL,
+        )
 
     def test_never_successful_oracle(self):
         """Test the check script given a lack of success, ever."""
@@ -205,13 +220,19 @@ class TestCheckDBDumpRecent(unittest.TestCase):
             "Yet another Error",
         ]
 
-        self._run_test(log_line_list, check_db_dump_recent.RETURN_CODE_CRITICAL)
+        self._run_test(
+            log_line_list,
+            check_db_dump_recent.RETURN_CODE_CRITICAL,
+        )
 
     def test_empty_log(self):
         """Test the check script given an empty input."""
         log_line_list = []
 
-        self._run_test(log_line_list, check_db_dump_recent.RETURN_CODE_CRITICAL)
+        self._run_test(
+            log_line_list,
+            check_db_dump_recent.RETURN_CODE_CRITICAL,
+        )
 
     def test_no_log(self):
         """Test the check script given a non existent input."""
