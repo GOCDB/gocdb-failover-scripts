@@ -170,7 +170,8 @@ mv $dmpTarget $dmpTargetFN.dmp
 # and move back up a dir as before
 cd ..
 
-# Do not remove following line - another process relies on this exact string
-# being the last line in the log file
+# Do not remove following lines - other processes rely on these exact
+# strings being the last line in the relevant log file.
+echo "$(date --iso-8601='seconds') INFO: completed ok"
 logger "completed ok"
 # Do not add any further "logger" statements after above line

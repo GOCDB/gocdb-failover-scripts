@@ -4,7 +4,7 @@
 This file contains a script to check the GOCDB failover process is happening.
 
 Specifically, it checks the log file passed as the first argument for evidence
-the process has succeeded / failed recently.
+the process has succeeded recently.
 """
 from datetime import datetime, timedelta
 import sys
@@ -23,6 +23,9 @@ class CheckDBDumpRecent():
         # successful run was this long ago.
         self.GRACE_PERIOD = grace_period
 
+        # The string the database update script outputs on a successful restore.
+        self.OK_STRING = "completed ok"
+
     def run(self, log_file_path):
         # Wrap everything in a try...except block so we can return
         # RETURN_CODE_UNKNOWN on a unexpected failure.
@@ -31,9 +34,8 @@ class CheckDBDumpRecent():
             # Use a inner try...except block to handle the more expected error
             # of "Couldn't open/read the provided file" differently.
             try:
-                with open(log_file_path, 'r') as log_file_path:
-                    lines = log_file_path.read().splitlines()
-                    last_line = lines[-1]
+                with open(log_file_path, 'r') as log_file:
+                    line_list = log_file.read().splitlines()
             except IOError:
                 print(
                     "An error occured trying to open/read {0}".format(
@@ -43,17 +45,30 @@ class CheckDBDumpRecent():
 
                 return RETURN_CODE_CRITICAL
 
-            # Convert the last line of the log to a timestamp.
-            # Use a inner try...except block to handle the somewhat more
-            # expected error of "the failover process ran, but something
-            # went wrong" differently.
-            try:
-                last_success = datetime.strptime(
-                    last_line,
-                    "%Y-%m-%dT%H:%M:%S%z",
+            # Assume the failover process has never run, then attempt to
+            # disprove that by looping through the logs.
+            last_success = None
+            for line in reversed(line_list):
+                # If OK_STRING is in the line we are looking at, we need to extract
+                # the timestamp from that line to determine when the failover
+                # process last succeeded.
+                if self.OK_STRING in line:
+                    last_success_timestamp = line.split(" ")[0]
+                    last_success = datetime.strptime(
+                        last_success_timestamp,
+                        "%Y-%m-%dT%H:%M:%S+0000",
+                    )
+                    # We only want the most recent success, so once we have
+                    # found it, break out of this loop
+                    break
+
+            if last_success is None:
+                print(
+                    "The failover process has never succeeded, "
+                    "according to %s." % (
+                        log_file_path
+                    )
                 )
-            except ValueError:
-                print("An error occured: {0}".format(last_line))
                 return RETURN_CODE_CRITICAL
 
             print("The failover process last succeeded at %s" % last_success)

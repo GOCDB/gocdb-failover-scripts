@@ -51,6 +51,10 @@ This repo contains the service and cron scripts used to run a failover gocdb ins
   check
       |_ check_db_dump_recent.py  # Python script to checks the failover
                                   # process is happening
+
+  test
+      |_ test_check_db_dump_recent.py  # Unit tests for the
+                                       # check/check_db_dump_recent.py script
 ```
 
 ## /root/autoEngageFailover/
